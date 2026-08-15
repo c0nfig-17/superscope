@@ -55,17 +55,22 @@ The block size, severities, rate limits and every stage toggle are configurable.
 ```bash
 git clone https://github.com/c0nfig-17/superscope
 cd superscope
-./install.sh          # Python deps + subfinder, nuclei, subzy, notify (via go install)
+./install.sh          # one command: Python deps + subfinder, nuclei, subzy, notify
 ```
 
-`install.sh` is best-effort and idempotent. Any binary it can't install is
-reported; superscope then **skips that stage at runtime** with an install hint
-rather than crashing, so a partial toolbox still runs the stages it can.
+`./install.sh` is a single, no-sudo command. It installs the Python deps and
+the four tools, and — **only if `go` isn't already on your PATH** — drops a
+local Go toolchain into `~/.local/go` first, so you don't need to install Go
+yourself. Tool binaries land in `~/go/bin`; the script prints the one `export
+PATH=…` line to add to your shell rc.
 
-Requirements: Python 3.9+, `git`, and (for the scanning stages) the Go tools
-above. Nuclei needs its templates — superscope fetches `nucleihub-templates`
-automatically, but you may also want `nuclei -update-templates` for the
-official set.
+Everything is best-effort and idempotent: any binary it can't install is
+reported, and superscope then **skips that stage at runtime** with an install
+hint rather than crashing, so a partial toolbox still runs the stages it can.
+
+Requirements: Python 3.9+, `git`, and `curl`/`wget`. Nuclei needs its
+templates — superscope fetches `nucleihub-templates` automatically, and
+`install.sh` also runs `nuclei -update-templates` for the official set.
 
 ---
 
