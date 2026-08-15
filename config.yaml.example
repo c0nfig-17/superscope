@@ -1,0 +1,65 @@
+# superscope configuration — copy to config.yaml and edit.
+#
+# Secrets never live here. Webhook URLs stay inside Notify's own provider-config
+# YAML files; this file only points at those files (directly or via an env var).
+
+scope:
+  # rix4uni/scope is cloned into <workdir>/scope by default. Point local_path at
+  # an existing checkout (or your own fork) to run offline.
+  repo: "https://github.com/rix4uni/scope"
+  local_path: ""
+  platforms: ["bugcrowd", "hackerone"]
+  respect_outofscope: true
+  # Optional narrowing by registrable domain. Leave empty to scan all in-scope.
+  include_roots: []      # e.g. ["example.com"] -> only entries under example.com
+  exclude_roots: []      # e.g. ["google.com"]  -> never touch these
+
+templates:
+  repo: "https://github.com/rix4uni/nucleihub-templates"
+  local_path: ""
+  subdir: "nucleihub-templates"   # where the .yaml templates actually live
+  update: true                    # git pull if already cloned
+
+flow:
+  workdir: "./output"
+  batch_size: 30          # Nuclei scans enumerated subdomains in blocks of 30
+  run_subfinder: true
+  run_nuclei: true
+  run_subzy: true
+  dry_run: false          # true = resolve scope + print the plan, scan nothing
+
+subfinder:
+  binary: "subfinder"
+  extra_args: ["-silent", "-all"]
+  timeout_seconds: 900
+  provider_config: ""     # optional path to subfinder's provider-config.yaml
+
+nuclei:
+  binary: "nuclei"
+  extra_args: ["-silent", "-jsonl", "-no-color"]
+  severities: ["low", "medium", "high", "critical"]  # [] = notify on everything
+  rate_limit: 150         # -rl
+  concurrency: 25         # -c
+  timeout_seconds: 3600
+
+subzy:
+  binary: "subzy"
+  extra_args: ["--hide_fails", "--concurrency", "50"]
+  timeout_seconds: 1800
+
+# Two independent Notify channels. Each names its OWN provider-config file, so
+# findings and takeovers can go to different webhooks. Put the webhook URLs in
+# those provider-config YAMLs, not here.
+notify:
+  enabled: true
+  binary: "notify"
+  bulk: true
+  findings:
+    # Set the file path directly, OR export the env var and leave path empty.
+    provider_config: ""                              # e.g. ~/.config/notify/findings.yaml
+    provider_config_env: "SUPERSCOPE_NOTIFY_FINDINGS"
+    provider_id: ""                                  # optional `notify -id` profile
+  takeover:
+    provider_config: ""                              # e.g. ~/.config/notify/takeover.yaml — DIFFERENT webhook
+    provider_config_env: "SUPERSCOPE_NOTIFY_TAKEOVER"
+    provider_id: ""

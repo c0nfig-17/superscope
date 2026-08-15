@@ -1,0 +1,20 @@
+# superscope local state
+config.yaml
+output/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Notify provider configs may hold webhook URLs — never commit them
+provider-config*.yaml
+*findings*.yaml
+*takeover*.yaml

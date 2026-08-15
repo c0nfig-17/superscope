@@ -1,0 +1,4 @@
+PyYAML>=6.0
+# Optional but recommended for accurate registrable-domain math (co.uk, com.br…).
+# superscope falls back to a built-in suffix set if it is not installed.
+tldextract>=3.4

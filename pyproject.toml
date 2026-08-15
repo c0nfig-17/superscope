@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "superscope"
+version = "0.1.0"
+description = "Bugcrowd/HackerOne scope-driven scanning pipeline (subfinder → nuclei → subzy → notify)"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+psl = ["tldextract>=3.4"]
+
+[project.scripts]
+superscope = "superscope.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["superscope*"]
